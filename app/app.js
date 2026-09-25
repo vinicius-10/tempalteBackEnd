@@ -1,6 +1,6 @@
 const db_mongoose = require('./config/db_mongoose');
 const mongoose = require('mongoose');
-const Campus = require('./models/campus');
+const Exemplo = require('./models/Exemplo');
 
 mongoose.connect(
   db_mongoose.connection,
@@ -11,48 +11,46 @@ mongoose.connect(
   console.log("eroo: " + err)
 });
 
-
-function insereCampus() {
-  new Campus({
-    nome: 'Dois Vizinhos',
-    universidade: 'UTFPR',
-    endereco: 'estrada para ...',
-    qtdAlunos: 1500
+// --- CREATE ---
+function insereExemplo() {
+  new Exemplo({
+    str: 'Teste',
+    int: 10
   }).save().then(() => {
-    console.log('Campus cadastrado');
+    console.log('Exemplo cadastrado');
   }).catch((err) => {
-    console.log('erro');
+    console.log('erro: ' + err);
   });
 }
 
-//insereCampus();
-
-async function consultaCampus() {
-  const campi = await Campus.find({
-    universidade: 'UTFPR'
+// --- READ ---
+async function consultaExemplo() {
+  const exemplos = await Exemplo.find({
+    str: 'Teste'
   });
 
-  console.log(campi);
+  console.log(exemplos);
 }
-
-//consultaCampus();
-
-async function atualizaCampus() {
-  const campi = await Campus.findOneAndUpdate(
-    { universidade: 'UTFPR' },
-    { universidade: 'UTFPR-DV' }
+// --- UPDATE ---
+async function atualizaExemplo() {
+  const exemplos = await Exemplo.findOneAndUpdate(
+    { str: 'Teste' },
+    { int: 20 }
   );
 
-  console.log(campi);
+  console.log(exemplos);
 }
 
-// atualizaCampus();
-
-
-async function deletaCampus() {
-  const campi = await Campus.findOneAndDelete({
-    universidade: 'UTFPR'
+// --- DELETE ---
+async function deletaExemplo() {
+  const exemplos = await Exemplo.findOneAndDelete({
+    str: 'Teste'
   });
 }
 
-// deletaCampus();
+
+
+ insereExemplo();
+// consultaExemplo();
+// atualizaExemplo();
+// deletaExemplo();
