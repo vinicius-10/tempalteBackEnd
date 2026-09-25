@@ -9,3 +9,15 @@ services:
       - /usr/src/app/node_modules
     env_file:
       - .env
+    depends_on:
+      - db
+
+  db:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:

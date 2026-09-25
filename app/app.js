@@ -51,6 +51,6 @@ async function deletaExemplo() {
 
 
  insereExemplo();
-// consultaExemplo();
+ consultaExemplo();
 // atualizaExemplo();
 // deletaExemplo();
