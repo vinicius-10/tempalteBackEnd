@@ -1,0 +1,11 @@
+services:
+  app:
+    build: .
+    restart: on-failure
+    ports:
+      - "${PORT_SERVER}:${PORT_SERVER}"
+    volumes:
+      - ./app:/usr/src/app
+      - /usr/src/app/node_modules
+    env_file:
+      - .env
