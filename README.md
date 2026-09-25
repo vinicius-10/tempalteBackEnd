@@ -1,4 +1,4 @@
-```markdown
+
 # Template Backend - Node.js & MongoDB
 > Template containerizado desenvolvido para auxiliar os alunos nas aulas de Programação Web Backend do curso de Engenharia de Computação da UTFPR-CP.
 
@@ -110,7 +110,6 @@ cp .env.example .env
 
 3.  **Configuração do `.env`:**
 Edite o `.env` na raiz do projeto com seus dados:
-
 ```env
 # Server
 PORT_SERVER=8080
@@ -124,9 +123,7 @@ DB_URL=mongodb://db:27017/backend
 ```
 
 4. **Alternando entre Conexão Local e Atlas:**
-
 No arquivo `app/config/db_mongoose.js`, altere qual variável será utilizada comentando/descomentando a linha correspondente:
-
 ```javascript
 // const DB_URL = process.env.MONGO_URL_ATLAS // Conexão pelo Atlas (Nuvem)
 const DB_URL = process.env.DB_URL // Conexão local (Docker)
