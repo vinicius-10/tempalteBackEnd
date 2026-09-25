@@ -108,8 +108,7 @@ cp .env.example .env
 ```
 
 
-3.  **Configuração do `.env`**
-
+3.  **Configuração do `.env`:**
 Edite o `.env` na raiz do projeto com seus dados:
 
 ```env
@@ -124,7 +123,7 @@ DB_URL=mongodb://db:27017/backend
 
 ```
 
-4. Alternando entre Conexão Local e Atlas
+4. **Alternando entre Conexão Local e Atlas:**
 
 No arquivo `app/config/db_mongoose.js`, altere qual variável será utilizada comentando/descomentando a linha correspondente:
 
@@ -138,7 +137,7 @@ const StringCon = {
 
 module.exports = StringCon;
 
-
+```
 
 
 5. **Subir os Containers no Docker:**
