@@ -1,3 +1,4 @@
+```markdown
 # Template Backend - Node.js & MongoDB
 > Template containerizado desenvolvido para auxiliar os alunos nas aulas de Programação Web Backend do curso de Engenharia de Computação da UTFPR-CP.
 
@@ -12,7 +13,7 @@
 ## Programação Web Backend - Engenharia de Computação - UTFPR-CP
 
 ### Criador
-| Aluno |
+| Alunos |
 |:--------|
 | [Vinícius Souza Dias](https://github.com/vinicius-10) |
 
@@ -24,7 +25,7 @@
 | [Objetivo](#objetivo) |
 | [Público-Alvo](#público-alvo) |
 | [Estrutura do Projeto](#estrutura-do-projeto) |
-| [Variáveis de Ambiente](#variáveis-de-ambiente) |
+| [Variáveis de Ambiente e Conexão](#variáveis-de-ambiente-e-conexão) |
 | [Como Executar](#como-executar) |
 | [Comandos Úteis do Docker](#comandos-úteis-do-docker) |
 
@@ -70,18 +71,18 @@ tempalte/
 * **`docker-compose.yml`**: Orquestra os containers da aplicação, configurando portas, volumes e injeção do arquivo `.env`.
 * **`Dockerfile`**: Define a imagem base do Node.js, diretório de trabalho (`/usr/src/app`) e o comando de inicialização com modo de recarregamento automático (`node --watch`).
 
-## Variáveis de Ambiente
+## Variáveis de Ambiente e Conexão
 
-Crie um arquivo `.env` na raiz do projeto com base no arquivo `.env.example`:
+O projeto suporta dois tipos de ambientes para o MongoDB: **Local (Docker)** e **Atlas (Nuvem)**.
 
-```env
-# Servidor Express / HTTP
-PORT_SERVER=8080
 
-# String de conexão com o MongoDB (Local via Docker ou Atlas na Nuvem)
-DB_URL=mongodb://db:27017/backend
+### 1. Comparativo de Conexão
 
-```
+| Característica | Conexão Local (`DB_URL`) | Conexão Atlas (`MONGO_URL_ATLAS`) |
+| --- | --- | --- |
+| **Hospedagem** | Container `db` no seu computador. | Nuvem (MongoDB Atlas). |
+| **Acesso à Internet** | **Não requer internet** (funciona offline). | **Exige internet ativa**. |
+| **Uso Ideal** | Aulas práticas, desenvolvimento sem internet ou testes rápidos. | Compartilhamento de banco com a equipe e entrega final de trabalhos. |
 
 ## Como Executar
 
@@ -104,11 +105,43 @@ cd template-backend
 Crie o arquivo `.env` na raiz copiando do modelo `.env.example`:
 ```bash
 cp .env.example .env
-
 ```
 
 
-3. **Subir os Containers no Docker:**
+3.  **Configuração do `.env`**
+
+Edite o `.env` na raiz do projeto com seus dados:
+
+```env
+# Server
+PORT_SERVER=8080
+
+# Database (MongoDB Cloud Atlas)
+MONGO_URL_ATLAS=mongodb+srv://usuario:<password>@cluster.mongodb.net/backend?retryWrites=true&w=majority
+
+# Database (MongoDB Local no Docker)
+DB_URL=mongodb://db:27017/backend
+
+```
+
+4. Alternando entre Conexão Local e Atlas
+
+No arquivo `app/config/db_mongoose.js`, altere qual variável será utilizada comentando/descomentando a linha correspondente:
+
+```javascript
+// const DB_URL = process.env.MONGO_URL_ATLAS // Conexão pelo Atlas (Nuvem)
+const DB_URL = process.env.DB_URL // Conexão local (Docker)
+
+const StringCon = {
+  connection: DB_URL
+};
+
+module.exports = StringCon;
+
+
+
+
+5. **Subir os Containers no Docker:**
 ```bash
 docker compose up
 
@@ -145,3 +178,4 @@ docker compose logs -f app
 docker compose down
 
 ```
+
