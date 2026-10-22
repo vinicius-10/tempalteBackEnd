@@ -76,15 +76,18 @@
       definirModoEdicaoPostagem(false);
       const autor = postagem.usuario?.nome || 'Usuário desconhecido';
       autorPostagem.textContent = `Por ${autor} · ${formatarData(postagem.createdAt)}`;
+    }
+
+    function renderizarComentarios(comentarios) {
       listaComentarios.replaceChildren();
 
-      if (postagem.comentarios.length === 0) {
+      if (comentarios.length === 0) {
         mensagemListaComentarios.textContent = 'Ainda não há comentários nesta postagem.';
         return;
       }
 
       mensagemListaComentarios.textContent = '';
-      for (const comentario of postagem.comentarios) {
+      for (const comentario of comentarios) {
         const item = document.createElement('li');
         const autorComentario = comentario.usuario?.nome || 'Usuário desconhecido';
 
@@ -317,14 +320,24 @@
 
     async function carregarPostagem() {
       try {
-        const resposta = await fetch(`/postagens/${encodeURIComponent(postagemId)}`);
-        const resultado = await resposta.json();
+        const respostaPostagem = await fetch(`/postagens/${encodeURIComponent(postagemId)}`);
+        const resultadoPostagem = await respostaPostagem.json();
 
-        if (!resposta.ok) {
-          throw new Error(resultado.mensagem || 'Não foi possível carregar a postagem.');
+        if (!respostaPostagem.ok) {
+          throw new Error(resultadoPostagem.mensagem || 'Não foi possível carregar a postagem.');
         }
 
-        renderizarPostagem(resultado.postagem);
+        const respostaComentarios = await fetch(
+          `/postagens/${encodeURIComponent(postagemId)}/comentarios`
+        );
+        const resultadoComentarios = await respostaComentarios.json();
+
+        if (!respostaComentarios.ok) {
+          throw new Error(resultadoComentarios.mensagem || 'Não foi possível carregar os comentários.');
+        }
+
+        renderizarPostagem(resultadoPostagem.postagem);
+        renderizarComentarios(resultadoComentarios.comentarios);
         mensagem.textContent = '';
       } catch (erro) {
         mensagem.textContent = erro.message || 'Não foi possível conectar ao servidor.';

@@ -23,9 +23,6 @@ class PostagemController {
     this.detalhar = this.detalhar.bind(this);
     this.editar = this.editar.bind(this);
     this.excluir = this.excluir.bind(this);
-    this.criarComentario = this.criarComentario.bind(this);
-    this.editarComentario = this.editarComentario.bind(this);
-    this.excluirComentario = this.excluirComentario.bind(this);
   }
 
   async listar(req, res) {
@@ -88,10 +85,6 @@ class PostagemController {
         });
       }
 
-      const comentarios = await this.comentarioDao.consultaComAutor({
-        postagem: postagem._id
-      });
-
       return res.status(200).json({
         postagem: {
           id: postagem._id,
@@ -103,18 +96,7 @@ class PostagemController {
                 email: postagem.usuario.email
               }
             : null,
-          createdAt: postagem.createdAt,
-          comentarios: comentarios.map((comentario) => ({
-            id: comentario._id,
-            conteudo: comentario.conteudo,
-            usuario: comentario.usuario
-              ? {
-                  nome: comentario.usuario.nome,
-                  email: comentario.usuario.email
-                }
-              : null,
-            createdAt: comentario.createdAt
-          }))
+          createdAt: postagem.createdAt
         }
       });
     } catch (err) {
@@ -207,172 +189,6 @@ class PostagemController {
       console.error('Erro ao excluir postagem:', err);
       return res.status(500).json({
         mensagem: 'Erro ao excluir postagem.'
-      });
-    }
-  }
-
-  async criarComentario(req, res) {
-    const { id } = req.params;
-    const { conteudo, email } = req.body || {};
-
-    if (!mongoose.isValidObjectId(id)) {
-      return res.status(400).json({
-        mensagem: 'Informe um ID de postagem válido.'
-      });
-    }
-
-    if (
-      typeof conteudo !== 'string' ||
-      !conteudo.trim() ||
-      typeof email !== 'string' ||
-      !email.trim()
-    ) {
-      return res.status(400).json({
-        mensagem: 'Informe o comentário e o email do usuário.'
-      });
-    }
-
-    const emailNormalizado = email.trim().toLowerCase();
-
-    if (!EMAIL_PATTERN.test(emailNormalizado)) {
-      return res.status(400).json({
-        mensagem: 'Informe um email válido.'
-      });
-    }
-
-    try {
-      const postagem = await this.postagemDao.consultaPorId(id);
-
-      if (!postagem) {
-        return res.status(404).json({
-          mensagem: 'Postagem não encontrada.'
-        });
-      }
-
-      const usuarios = await this.usuarioDao.consulta({ email: emailNormalizado });
-
-      if (usuarios.length === 0) {
-        return res.status(404).json({
-          mensagem: 'O usuário informado não foi encontrado.'
-        });
-      }
-
-      const comentario = await this.comentarioDao.insere({
-        conteudo: conteudo.trim(),
-        postagem: postagem._id,
-        usuario: usuarios[0]._id
-      });
-
-      return res.status(201).json({
-        comentario: {
-          id: comentario._id,
-          conteudo: comentario.conteudo,
-          email: emailNormalizado,
-          postagem: postagem._id,
-          createdAt: comentario.createdAt
-        }
-      });
-    } catch (err) {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
-        return res.status(400).json({
-          mensagem: 'Os dados do comentário são inválidos.'
-        });
-      }
-
-      console.error('Erro ao criar comentário:', err);
-      return res.status(500).json({
-        mensagem: 'Erro ao criar comentário.'
-      });
-    }
-  }
-
-  async editarComentario(req, res) {
-    const { id, comentarioId } = req.params;
-    const { conteudo } = req.body || {};
-
-    if (!mongoose.isValidObjectId(id) || !mongoose.isValidObjectId(comentarioId)) {
-      return res.status(400).json({
-        mensagem: 'Informe IDs válidos para a postagem e o comentário.'
-      });
-    }
-
-    if (typeof conteudo !== 'string' || !conteudo.trim()) {
-      return res.status(400).json({
-        mensagem: 'Informe o comentário atualizado.'
-      });
-    }
-
-    try {
-      const comentario = await this.comentarioDao.atualiza(
-        {
-          _id: comentarioId,
-          postagem: id
-        },
-        { conteudo: conteudo.trim() }
-      );
-
-      if (!comentario) {
-        return res.status(404).json({
-          mensagem: 'Comentário não encontrado nesta postagem.'
-        });
-      }
-
-      return res.status(200).json({
-        comentario: {
-          id: comentario._id,
-          conteudo: comentario.conteudo,
-          createdAt: comentario.createdAt,
-          updatedAt: comentario.updatedAt
-        }
-      });
-    } catch (err) {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
-        return res.status(400).json({
-          mensagem: 'Os dados do comentário são inválidos.'
-        });
-      }
-
-      console.error('Erro ao editar comentário:', err);
-      return res.status(500).json({
-        mensagem: 'Erro ao editar comentário.'
-      });
-    }
-  }
-
-  async excluirComentario(req, res) {
-    const { id, comentarioId } = req.params;
-
-    if (!mongoose.isValidObjectId(id) || !mongoose.isValidObjectId(comentarioId)) {
-      return res.status(400).json({
-        mensagem: 'Informe IDs válidos para a postagem e o comentário.'
-      });
-    }
-
-    try {
-      const comentario = await this.comentarioDao.deleta({
-        _id: comentarioId,
-        postagem: id
-      });
-
-      if (!comentario) {
-        return res.status(404).json({
-          mensagem: 'Comentário não encontrado nesta postagem.'
-        });
-      }
-
-      return res.status(200).json({
-        mensagem: 'Comentário excluído com sucesso.'
-      });
-    } catch (err) {
-      if (err.name === 'CastError') {
-        return res.status(400).json({
-          mensagem: 'Os dados do comentário são inválidos.'
-        });
-      }
-
-      console.error('Erro ao excluir comentário:', err);
-      return res.status(500).json({
-        mensagem: 'Erro ao excluir comentário.'
       });
     }
   }

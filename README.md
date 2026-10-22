@@ -70,7 +70,8 @@ Abra `GET /visualizarPostagens` para ver e buscar postagens pelo título ou cont
 
 - `GET /postagens` retorna a lista de postagens; o parâmetro opcional `q` filtra por título ou conteúdo (exemplo: `/postagens?q=microblog`).
 - `GET /visualizarPostagem/:id` exibe a página de detalhes.
-- `GET /postagens/:id` retorna uma postagem e os comentários vinculados a ela.
+- `GET /postagens/:id` retorna os dados de uma postagem.
+- `GET /postagens/:id/comentarios` retorna os comentários vinculados à postagem.
 - `PATCH /postagens/:id` edita o título e o conteúdo da postagem.
 - `DELETE /postagens/:id` exclui a postagem e seus comentários vinculados.
 - `POST /postagens/:id/comentarios` cadastra um comentário vinculado à postagem e a um usuário encontrado pelo e-mail.
@@ -113,6 +114,7 @@ Os modelos utilizam timestamps para registrar as datas de criação e atualizaç
 │   ├── config/
 │   │   └── db_mongoose.js
 │   ├── controllers/
+│   │   ├── ComentarioController.js
 │   │   ├── PostagemController.js
 │   │   └── UsuarioController.js
 │   ├── dao/
@@ -137,7 +139,7 @@ Os modelos utilizam timestamps para registrar as datas de criação e atualizaç
 ```
 
 - `app/models/`: schemas do Mongoose para as entidades do projeto.
-- `app/controllers/`: recebe as requisições HTTP e coordena o cadastro de usuários e a criação de postagens.
+- `app/controllers/`: separa o tratamento HTTP de usuários, postagens e comentários em controllers próprios.
 - `app/dao/`: operações de acesso a dados para usuários, postagens e comentários.
 - `app/config/db_mongoose.js`: configuração da conexão com o MongoDB.
 - `docker-compose.yml` e `Dockerfile`: configuração dos containers de desenvolvimento.
