@@ -1,110 +1,156 @@
 # Projeto 1 — Microblog
 
-Projeto desenvolvido para a disciplina de **Programação Web Backend**. A proposta é criar o back-end de uma aplicação inspirada em plataformas de microblogging, permitindo que usuários publiquem e encontrem postagens.
+Back-end de uma aplicação de microblog desenvolvida para a disciplina de **Programação Web Backend**. Usuários podem publicar textos, encontrar publicações e interagir por meio de comentários.
 
-## Objetivo
+## Integrante
 
-Praticar o desenvolvimento de uma aplicação back-end com Node.js, Express e MongoDB, organizando os dados em entidades relacionadas e disponibilizando funcionalidades para gerenciar usuários, postagens e comentários.
+- Vinícius Souza Dias — [@vinicius-10](https://github.com/vinicius-10)
 
-## Funcionalidades previstas
+## Descrição
 
-- Cadastro e consulta de usuários.
-- Criação e consulta de postagens.
-- Busca de publicações.
-- Atualização e exclusão de postagens.
-- Criação e consulta de comentários associados a usuários e postagens.
+A aplicação oferece uma API HTTP e páginas HTML simples para cadastrar usuários, criar e buscar postagens, visualizar detalhes e gerenciar comentários vinculados às publicações. Os dados são armazenados no MongoDB usando Mongoose.
 
-As funcionalidades representam o escopo do projeto; as rotas serão implementadas gradualmente.
+## Entidades e classes implementadas
 
-## API
-
-### Cadastrar usuário
-
-Abra `GET /cadastroUsuario` para acessar o formulário. Ele valida os campos no navegador e envia os dados em JSON para `POST /cadastroUsuario`.
-
-O endpoint `POST /usuarios` também está disponível para clientes que enviam JSON diretamente.
-
-Envie um JSON com nome, e-mail, senha com pelo menos seis caracteres e a confirmação:
-
-```json
-{
-  "nome": "Ana",
-  "email": "ana@example.com",
-  "senha": "minha-senha",
-  "confirmarSenha": "minha-senha"
-}
-```
-
-Em caso de sucesso, a API responde com `201 Created` e os dados públicos do usuário (a senha não é incluída):
-
-```json
-{
-  "usuario": {
-    "id": "id-do-usuario",
-    "nome": "Ana",
-    "email": "ana@example.com",
-    "createdAt": "data-de-criacao"
-  }
-}
-```
-
-Dados obrigatórios ausentes ou inválidos retornam `400 Bad Request`. Um e-mail já cadastrado retorna `409 Conflict`.
-
-### Criar postagem
-
-Abra `GET /criarPostagem` para acessar o formulário. Informe o e-mail de um usuário já cadastrado; o formulário envia os dados em JSON para `POST /criarPostagem`. O endpoint `POST /postagens` também está disponível para clientes que enviam JSON diretamente.
-
-```json
-{
-  "titulo": "Minha primeira postagem",
-  "conteudo": "Olá, microblog!",
-  "email": "ana@example.com"
-}
-```
-
-Em caso de sucesso, a API responde com `201 Created`. Campos inválidos retornam `400 Bad Request`; um e-mail que não corresponde a um usuário cadastrado retorna `404 Not Found`. A postagem continua armazenando internamente a referência ao usuário.
-
-### Visualizar postagens e comentários
-
-Abra `GET /visualizarPostagens` para ver e buscar postagens pelo título ou conteúdo. Cada cartão com título e conteúdo é um link para a página de detalhes, que exibe a postagem e seus comentários.
-
-- `GET /postagens` retorna a lista de postagens; o parâmetro opcional `q` filtra por título ou conteúdo (exemplo: `/postagens?q=microblog`).
-- `GET /visualizarPostagem/:id` exibe a página de detalhes.
-- `GET /postagens/:id` retorna os dados de uma postagem.
-- `GET /postagens/:id/comentarios` retorna os comentários vinculados à postagem.
-- `PATCH /postagens/:id` edita o título e o conteúdo da postagem.
-- `DELETE /postagens/:id` exclui a postagem e seus comentários vinculados.
-- `POST /postagens/:id/comentarios` cadastra um comentário vinculado à postagem e a um usuário encontrado pelo e-mail.
-- `PATCH /postagens/:id/comentarios/:comentarioId` edita um comentário.
-- `DELETE /postagens/:id/comentarios/:comentarioId` exclui um comentário.
-
-As rotas de edição e exclusão identificam postagens e comentários pelos IDs da URL. Excluir uma postagem também remove seus comentários vinculados. Como ainda não há autenticação, essas rotas não verificam a identidade de quem solicita a alteração.
-
-Para cadastrar um comentário, envie `conteudo` e `email` em JSON:
-
-```json
-{
-  "conteudo": "Ótima publicação!",
-  "email": "ana@example.com"
-}
-```
-
-## Entidades
-
-| Entidade | Dados principais | Relacionamentos |
+| Entidade | Campos principais | Relacionamentos |
 | --- | --- | --- |
-| **Usuário** | Nome, e-mail e senha | Pode criar postagens e comentários |
+| **Usuario** | Nome, e-mail e senha | Pode criar postagens e comentários |
 | **Postagem** | Título e conteúdo | Pertence a um usuário |
-| **Comentário** | Conteúdo | Pertence a um usuário e a uma postagem |
+| **Comentario** | Conteúdo | Pertence a um usuário e a uma postagem |
 
-Os modelos utilizam timestamps para registrar as datas de criação e atualização.
+Os schemas estão em `app/models/`; o acesso ao banco é organizado pelos DAOs em `app/dao/`; os endpoints são tratados pelos controllers em `app/controllers/`.
+
+## Funcionalidades
+
+- Cadastro de usuários com validação de e-mail e senha.
+- Criação de postagens associadas a usuários identificados por e-mail.
+- Listagem e busca de postagens por título ou conteúdo.
+- Visualização individual da postagem e dos comentários vinculados.
+- Edição e exclusão de postagens.
+- Criação, edição e exclusão de comentários.
+- Remoção dos comentários vinculados ao excluir uma postagem.
+
+> A aplicação ainda não possui autenticação. As rotas de edição e exclusão não verificam a identidade de quem as solicita.
 
 ## Tecnologias
 
-- **Node.js** e **Express** para a aplicação back-end.
-- **MongoDB** como banco de dados.
-- **Mongoose** para definir os modelos e acessar o banco.
-- **Docker Compose** para orquestrar a aplicação e o banco durante o desenvolvimento.
+- Node.js 20 ou superior.
+- npm.
+- Express.
+- MongoDB Atlas.
+- Mongoose.
+- Docker Desktop com Docker Compose (para execução containerizada).
+
+## Requisitos para executar
+
+Escolha uma das formas de execução:
+
+- **Com Docker:** Docker Desktop instalado e em execução, com Docker Compose disponível.
+- **Localmente:** Node.js 20 ou superior e npm instalados.
+- **Banco de dados:** uma instância MongoDB Atlas acessível pela rede. O serviço MongoDB local do `docker-compose.yml` está desativado; o Compose executa a aplicação Node.js e usa o Atlas configurado no `.env`.
+
+## Configuração do MongoDB Atlas
+
+1. Crie uma conta e um cluster no [MongoDB Atlas](https://www.mongodb.com/atlas/database).
+2. Crie um usuário de banco de dados e defina uma senha.
+3. Em **Network Access**, autorize o endereço IP da máquina que executará a aplicação.
+4. No cluster, escolha **Connect** e copie a connection string para Node.js.
+5. Substitua o usuário, a senha e o cluster na URI. Inclua o nome do banco, por exemplo:
+
+   ```text
+   mongodb+srv://<usuario>:<senha>@<cluster>.mongodb.net/microblog?retryWrites=true&w=majority
+   ```
+
+   Se a senha contiver caracteres especiais, faça o URL encoding desses caracteres.
+
+Consulte também o material de configuração MongoDB disponibilizado pela disciplina: [guia no Moodle da UTFPR](https://moodle.utfpr.edu.br/mod/book/view.php?id=2172296).
+
+## Instalação e configuração
+
+Na raiz do repositório, crie o arquivo local `.env` a partir do exemplo:
+
+```bash
+cp .env.example .env
+```
+
+Edite o `.env` e configure os valores:
+
+```env
+PORT_SERVER=8080
+MONGO_URL_ATLAS=mongodb+srv://<usuario>:<senha>@<cluster>.mongodb.net/microblog?retryWrites=true&w=majority
+```
+
+O arquivo `.env` contém credenciais e não deve ser enviado ao Git.
+
+### Instalar dependências para execução local
+
+```bash
+cd app
+npm install
+```
+
+## Executar o projeto
+
+### Com Docker Compose
+
+Com o `.env` configurado e o Docker Desktop em execução, volte à raiz do repositório e execute:
+
+```bash
+docker compose up --build
+```
+
+A aplicação estará disponível em `http://localhost:8080` (ou na porta definida em `PORT_SERVER`). Para encerrar:
+
+```bash
+docker compose down
+```
+
+### Localmente, sem Docker
+
+No terminal, entre na pasta `app`, configure `MONGO_URL_ATLAS` e `PORT_SERVER` no ambiente e inicie a aplicação:
+
+```bash
+cd app
+npm install
+npm start
+```
+
+No Linux ou macOS, as variáveis podem ser definidas antes de iniciar:
+
+```bash
+export PORT_SERVER=8080
+export MONGO_URL_ATLAS='mongodb+srv://<usuario>:<senha>@<cluster>.mongodb.net/microblog?retryWrites=true&w=majority'
+npm start
+```
+
+No PowerShell:
+
+```powershell
+$env:PORT_SERVER = "8080"
+$env:MONGO_URL_ATLAS = "mongodb+srv://<usuario>:<senha>@<cluster>.mongodb.net/microblog?retryWrites=true&w=majority"
+npm start
+```
+
+Como o comando local não carrega o `.env` automaticamente, configure as variáveis no ambiente antes de executar `npm start`.
+
+## Páginas e endpoints
+
+| Método | Caminho | Descrição |
+| --- | --- | --- |
+| GET | `/cadastroUsuario` | Formulário para cadastro de usuário |
+| POST | `/cadastroUsuario` | Cadastra usuário recebendo JSON |
+| GET | `/criarPostagem` | Formulário para criar postagem |
+| POST | `/criarPostagem` | Cria postagem associada ao e-mail de um usuário |
+| GET | `/visualizarPostagens` | Lista e busca postagens |
+| GET | `/visualizarPostagem/:id` | Página de detalhes da postagem e comentários |
+| GET | `/postagens?q=termo` | Lista postagens; `q` filtra título e conteúdo |
+| GET | `/postagens/:id` | Consulta uma postagem |
+| PATCH | `/postagens/:id` | Edita título e conteúdo |
+| DELETE | `/postagens/:id` | Exclui postagem e comentários vinculados |
+| GET | `/postagens/:id/comentarios` | Lista comentários da postagem |
+| POST | `/postagens/:id/comentarios` | Cria comentário |
+| PATCH | `/postagens/:id/comentarios/:comentarioId` | Edita comentário |
+| DELETE | `/postagens/:id/comentarios/:comentarioId` | Exclui comentário |
 
 ## Estrutura do projeto
 
@@ -112,43 +158,20 @@ Os modelos utilizam timestamps para registrar as datas de criação e atualizaç
 .
 ├── app/
 │   ├── config/
-│   │   └── db_mongoose.js
 │   ├── controllers/
-│   │   ├── ComentarioController.js
-│   │   ├── PostagemController.js
-│   │   └── UsuarioController.js
 │   ├── dao/
-│   │   ├── ComentarioDao.js
-│   │   ├── PostagemDao.js
-│   │   └── UsuarioDao.js
 │   ├── log/
 │   │   └── errors.log
 │   ├── models/
-│   │   ├── Comentario.js
-│   │   ├── Postagem.js
-│   │   └── Usuario.js
 │   ├── public/
-│   │   ├── cadastroUsuario.html
-│   │   ├── criarPostagem.html
-│   │   ├── visualizarPostagem.html
-│   │   └── visualizarPostagens.html
+│   ├── utils/
 │   ├── app.js
 │   ├── package.json
 │   └── server.js
+├── .env.example
 ├── docker-compose.yml
 ├── Dockerfile
 └── README.md
 ```
 
-- `app/models/`: schemas do Mongoose para as entidades do projeto.
-- `app/controllers/`: separa o tratamento HTTP de usuários, postagens e comentários em controllers próprios.
-- `app/dao/`: operações de acesso a dados para usuários, postagens e comentários.
-- `app/log/errors.log`: registra exceções capturadas com data e horário, operação, tipo, mensagem e stack trace quando disponível.
-- `app/config/db_mongoose.js`: configuração da conexão com o MongoDB.
-- `docker-compose.yml` e `Dockerfile`: configuração dos containers de desenvolvimento.
-
-Os registros seguem o formato `[DD/MM/AAAA HH:mm:ss]`, com operação, tipo, mensagem e stack trace quando disponível. O logger cria a pasta e o arquivo caso ainda não existam.
-
-## Status
-
-Os modelos e as operações básicas de acesso a dados estão definidos. A API já possui formulários para cadastro de usuário, criação e visualização de postagens com comentários; as demais funcionalidades serão desenvolvidas ao longo do projeto.
+As exceções da aplicação são registradas em `app/log/errors.log`, incluindo data e hora, operação, tipo, mensagem e stack trace quando disponível.
