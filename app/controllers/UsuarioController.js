@@ -1,5 +1,7 @@
 const UsuarioDao = require('../dao/UsuarioDao');
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 class UsuarioController {
   constructor(usuarioDao = new UsuarioDao()) {
     this.usuarioDao = usuarioDao;
@@ -7,7 +9,7 @@ class UsuarioController {
   }
 
   async cadastrar(req, res) {
-    const { nome, email, senha } = req.body || {};
+    const { nome, email, senha, confirmarSenha } = req.body || {};
 
     if (
       typeof nome !== 'string' ||
@@ -15,10 +17,30 @@ class UsuarioController {
       typeof email !== 'string' ||
       !email.trim() ||
       typeof senha !== 'string' ||
-      !senha.trim()
+      !senha.trim() ||
+      typeof confirmarSenha !== 'string' ||
+      !confirmarSenha.trim()
     ) {
       return res.status(400).json({
-        mensagem: 'Informe nome, email e senha.'
+        mensagem: 'Informe nome, email, senha e confirmação da senha.'
+      });
+    }
+
+    if (!EMAIL_PATTERN.test(email.trim())) {
+      return res.status(400).json({
+        mensagem: 'Informe um email válido.'
+      });
+    }
+
+    if (senha.length < 6) {
+      return res.status(400).json({
+        mensagem: 'A senha deve ter pelo menos 6 caracteres.'
+      });
+    }
+
+    if (senha !== confirmarSenha) {
+      return res.status(400).json({
+        mensagem: 'A senha e a confirmação não coincidem.'
       });
     }
 

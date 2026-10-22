@@ -24,13 +24,14 @@ Abra `GET /cadastroUsuario` para acessar o formulário. Ele valida os campos no 
 
 O endpoint `POST /usuarios` também está disponível para clientes que enviam JSON diretamente.
 
-Envie um JSON com nome, e-mail e senha:
+Envie um JSON com nome, e-mail, senha com pelo menos seis caracteres e a confirmação:
 
 ```json
 {
   "nome": "Ana",
   "email": "ana@example.com",
-  "senha": "minha-senha"
+  "senha": "minha-senha",
+  "confirmarSenha": "minha-senha"
 }
 ```
 

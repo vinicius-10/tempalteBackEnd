@@ -22,7 +22,12 @@
 
       <div>
         <label for="senha">Senha</label>
-        <input id="senha" name="senha" type="password" required>
+        <input id="senha" name="senha" type="password" minlength="6" required>
+      </div>
+
+      <div>
+        <label for="confirmarSenha">Confirme a senha</label>
+        <input id="confirmarSenha" name="confirmarSenha" type="password" minlength="6" required>
       </div>
 
       <button type="submit">Cadastrar</button>
@@ -42,9 +47,25 @@
       const nome = form.elements.nome.value.trim();
       const email = form.elements.email.value.trim();
       const senha = form.elements.senha.value;
+      const confirmarSenha = form.elements.confirmarSenha.value;
 
-      if (!nome || !email || !senha.trim()) {
-        mensagem.textContent = 'Preencha nome, e-mail e senha.';
+      if (!nome || !email || !senha.trim() || !confirmarSenha.trim()) {
+        mensagem.textContent = 'Preencha nome, e-mail, senha e confirmação da senha.';
+        return;
+      }
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        mensagem.textContent = 'Informe um e-mail válido.';
+        return;
+      }
+
+      if (senha.length < 6) {
+        mensagem.textContent = 'A senha deve ter pelo menos 6 caracteres.';
+        return;
+      }
+
+      if (senha !== confirmarSenha) {
+        mensagem.textContent = 'A senha e a confirmação não coincidem.';
         return;
       }
 
@@ -54,7 +75,7 @@
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ nome, email, senha })
+          body: JSON.stringify({ nome, email, senha, confirmarSenha })
         });
         const resultado = await resposta.json();
 
