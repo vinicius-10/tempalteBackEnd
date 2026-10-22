@@ -1,4 +1,5 @@
 const UsuarioDao = require('../dao/UsuarioDao');
+const logger = require('../utils/logger');
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -56,6 +57,8 @@ class UsuarioController {
         }
       });
     } catch (err) {
+      logger.registrarErro(err, 'Cadastrar usuário');
+
       if (err.code === 11000) {
         return res.status(409).json({
           mensagem: 'Já existe um usuário cadastrado com este email.'
@@ -68,7 +71,6 @@ class UsuarioController {
         });
       }
 
-      console.error('Erro ao cadastrar usuário:', err);
       return res.status(500).json({
         mensagem: 'Erro ao cadastrar usuário.'
       });

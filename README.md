@@ -121,6 +121,8 @@ Os modelos utilizam timestamps para registrar as datas de criação e atualizaç
 │   │   ├── ComentarioDao.js
 │   │   ├── PostagemDao.js
 │   │   └── UsuarioDao.js
+│   ├── log/
+│   │   └── errors.log
 │   ├── models/
 │   │   ├── Comentario.js
 │   │   ├── Postagem.js
@@ -141,8 +143,11 @@ Os modelos utilizam timestamps para registrar as datas de criação e atualizaç
 - `app/models/`: schemas do Mongoose para as entidades do projeto.
 - `app/controllers/`: separa o tratamento HTTP de usuários, postagens e comentários em controllers próprios.
 - `app/dao/`: operações de acesso a dados para usuários, postagens e comentários.
+- `app/log/errors.log`: registra exceções capturadas com data e horário, operação, tipo, mensagem e stack trace quando disponível.
 - `app/config/db_mongoose.js`: configuração da conexão com o MongoDB.
 - `docker-compose.yml` e `Dockerfile`: configuração dos containers de desenvolvimento.
+
+Os registros seguem o formato `[DD/MM/AAAA HH:mm:ss]`, com operação, tipo, mensagem e stack trace quando disponível. O logger cria a pasta e o arquivo caso ainda não existam.
 
 ## Status
 

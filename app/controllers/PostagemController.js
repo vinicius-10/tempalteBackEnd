@@ -2,6 +2,7 @@ const PostagemDao = require('../dao/PostagemDao');
 const ComentarioDao = require('../dao/ComentarioDao');
 const UsuarioDao = require('../dao/UsuarioDao');
 const mongoose = require('mongoose');
+const logger = require('../utils/logger');
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -60,7 +61,7 @@ class PostagemController {
         }))
       });
     } catch (err) {
-      console.error('Erro ao consultar postagens:', err);
+      logger.registrarErro(err, 'Consultar postagens');
       return res.status(500).json({
         mensagem: 'Erro ao consultar postagens.'
       });
@@ -100,7 +101,7 @@ class PostagemController {
         }
       });
     } catch (err) {
-      console.error('Erro ao consultar postagem:', err);
+      logger.registrarErro(err, 'Consultar postagem');
       return res.status(500).json({
         mensagem: 'Erro ao consultar postagem.'
       });
@@ -149,13 +150,14 @@ class PostagemController {
         }
       });
     } catch (err) {
+      logger.registrarErro(err, 'Editar postagem');
+
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         return res.status(400).json({
           mensagem: 'Os dados da postagem são inválidos.'
         });
       }
 
-      console.error('Erro ao editar postagem:', err);
       return res.status(500).json({
         mensagem: 'Erro ao editar postagem.'
       });
@@ -186,7 +188,7 @@ class PostagemController {
         mensagem: 'Postagem excluída com sucesso.'
       });
     } catch (err) {
-      console.error('Erro ao excluir postagem:', err);
+      logger.registrarErro(err, 'Excluir postagem');
       return res.status(500).json({
         mensagem: 'Erro ao excluir postagem.'
       });
@@ -248,7 +250,7 @@ class PostagemController {
         });
       }
 
-      console.error('Erro ao criar postagem:', err);
+      logger.registrarErro(err, 'Criar postagem');
       return res.status(500).json({
         mensagem: 'Erro ao criar postagem.'
       });

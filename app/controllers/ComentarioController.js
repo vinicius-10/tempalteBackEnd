@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const ComentarioDao = require('../dao/ComentarioDao');
 const PostagemDao = require('../dao/PostagemDao');
 const UsuarioDao = require('../dao/UsuarioDao');
+const logger = require('../utils/logger');
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -56,7 +57,7 @@ class ComentarioController {
         }))
       });
     } catch (err) {
-      console.error('Erro ao consultar comentários:', err);
+      logger.registrarErro(err, 'Consultar comentários da postagem');
       return res.status(500).json({
         mensagem: 'Erro ao consultar comentários.'
       });
@@ -125,13 +126,14 @@ class ComentarioController {
         }
       });
     } catch (err) {
+      logger.registrarErro(err, 'Criar comentário');
+
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         return res.status(400).json({
           mensagem: 'Os dados do comentário são inválidos.'
         });
       }
 
-      console.error('Erro ao criar comentário:', err);
       return res.status(500).json({
         mensagem: 'Erro ao criar comentário.'
       });
@@ -175,13 +177,14 @@ class ComentarioController {
         }
       });
     } catch (err) {
+      logger.registrarErro(err, 'Editar comentário');
+
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         return res.status(400).json({
           mensagem: 'Os dados do comentário são inválidos.'
         });
       }
 
-      console.error('Erro ao editar comentário:', err);
       return res.status(500).json({
         mensagem: 'Erro ao editar comentário.'
       });
@@ -213,13 +216,14 @@ class ComentarioController {
         mensagem: 'Comentário excluído com sucesso.'
       });
     } catch (err) {
+      logger.registrarErro(err, 'Excluir comentário');
+
       if (err.name === 'CastError') {
         return res.status(400).json({
           mensagem: 'Os dados do comentário são inválidos.'
         });
       }
 
-      console.error('Erro ao excluir comentário:', err);
       return res.status(500).json({
         mensagem: 'Erro ao excluir comentário.'
       });

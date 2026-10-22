@@ -3,6 +3,7 @@ const path = require('node:path');
 const ComentarioController = require('./controllers/ComentarioController');
 const PostagemController = require('./controllers/PostagemController');
 const UsuarioController = require('./controllers/UsuarioController');
+const logger = require('./utils/logger');
 
 const app = express();
 const comentarioController = new ComentarioController();
@@ -57,5 +58,21 @@ app.post(
 );
 
 app.post('/criarPostagem', postagemController.criar);
+
+app.use((err, req, res, next) => {
+  logger.registrarErro(err, `${req.method} ${req.originalUrl}`);
+
+  if (res.headersSent) {
+    return next(err);
+  }
+
+  const status = Number.isInteger(err.status) && err.status >= 400 && err.status < 500
+    ? err.status
+    : 500;
+
+  return res.status(status).json({
+    mensagem: status === 400 ? 'A requisição contém dados inválidos.' : 'Erro interno do servidor.'
+  });
+});
 
 module.exports = app;
