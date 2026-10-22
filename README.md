@@ -14,7 +14,40 @@ Praticar o desenvolvimento de uma aplicação back-end com Node.js, Express e Mo
 - Atualização e exclusão de postagens.
 - Criação e consulta de comentários associados a usuários e postagens.
 
-As funcionalidades representam o escopo do projeto; as rotas da API serão desenvolvidas ao longo do trabalho.
+As funcionalidades representam o escopo do projeto; as rotas serão implementadas gradualmente.
+
+## API
+
+### Cadastrar usuário
+
+Abra `GET /cadastroUsuario` para acessar o formulário. Ele valida os campos no navegador e envia os dados em JSON para `POST /cadastroUsuario`.
+
+O endpoint `POST /usuarios` também está disponível para clientes que enviam JSON diretamente.
+
+Envie um JSON com nome, e-mail e senha:
+
+```json
+{
+  "nome": "Ana",
+  "email": "ana@example.com",
+  "senha": "minha-senha"
+}
+```
+
+Em caso de sucesso, a API responde com `201 Created` e os dados públicos do usuário (a senha não é incluída):
+
+```json
+{
+  "usuario": {
+    "id": "id-do-usuario",
+    "nome": "Ana",
+    "email": "ana@example.com",
+    "createdAt": "data-de-criacao"
+  }
+}
+```
+
+Dados obrigatórios ausentes ou inválidos retornam `400 Bad Request`. Um e-mail já cadastrado retorna `409 Conflict`.
 
 ## Entidades
 
@@ -40,6 +73,8 @@ Os modelos utilizam timestamps para registrar as datas de criação e atualizaç
 ├── app/
 │   ├── config/
 │   │   └── db_mongoose.js
+│   ├── controllers/
+│   │   └── UsuarioController.js
 │   ├── dao/
 │   │   ├── ComentarioDao.js
 │   │   ├── PostagemDao.js
@@ -57,10 +92,11 @@ Os modelos utilizam timestamps para registrar as datas de criação e atualizaç
 ```
 
 - `app/models/`: schemas do Mongoose para as entidades do projeto.
+- `app/controllers/`: recebe as requisições HTTP e coordena o cadastro de usuários.
 - `app/dao/`: operações de acesso a dados para usuários, postagens e comentários.
 - `app/config/db_mongoose.js`: configuração da conexão com o MongoDB.
 - `docker-compose.yml` e `Dockerfile`: configuração dos containers de desenvolvimento.
 
 ## Status
 
-Os modelos e as operações básicas de acesso a dados estão definidos. A implementação das rotas e das funcionalidades da API faz parte do desenvolvimento do projeto.
+Os modelos e as operações básicas de acesso a dados estão definidos. A API já possui a rota de cadastro de usuário; as demais funcionalidades serão desenvolvidas ao longo do projeto.

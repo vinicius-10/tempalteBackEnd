@@ -1,8 +1,8 @@
-//const DB_URL = process.env.MONGO_URL_ATLAS //conexão pelo atlas
-const DB_URL = process.env.DB_URL // conexão local
- 
+const DB_URL = process.env.MONGO_URL_ATLAS //conexão pelo atlas
+//const DB_URL = process.env.DB_URL // conexão local
+
 const StringCon = {
-  connection: "mongodb://localhost/web_db"
+  connection: DB_URL
 };
 
 module.exports = StringCon;

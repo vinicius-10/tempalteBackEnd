@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro de usuário</title>
+</head>
+<body>
+  <main>
+    <h1>Cadastro de usuário</h1>
+
+    <form id="formCadastro" action="/cadastroUsuario" method="post">
+      <div>
+        <label for="nome">Nome</label>
+        <input id="nome" name="nome" type="text" required>
+      </div>
+
+      <div>
+        <label for="email">E-mail</label>
+        <input id="email" name="email" type="email" required>
+      </div>
+
+      <div>
+        <label for="senha">Senha</label>
+        <input id="senha" name="senha" type="password" required>
+      </div>
+
+      <button type="submit">Cadastrar</button>
+    </form>
+
+    <p id="mensagem" role="status" aria-live="polite"></p>
+  </main>
+
+  <script>
+    const form = document.querySelector('#formCadastro');
+    const mensagem = document.querySelector('#mensagem');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      mensagem.textContent = '';
+
+      const nome = form.elements.nome.value.trim();
+      const email = form.elements.email.value.trim();
+      const senha = form.elements.senha.value;
+
+      if (!nome || !email || !senha.trim()) {
+        mensagem.textContent = 'Preencha nome, e-mail e senha.';
+        return;
+      }
+
+      try {
+        const resposta = await fetch(form.action, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ nome, email, senha })
+        });
+        const resultado = await resposta.json();
+
+        if (!resposta.ok) {
+          mensagem.textContent = resultado.mensagem || 'Não foi possível cadastrar o usuário.';
+          return;
+        }
+
+        mensagem.textContent = `Usuário ${resultado.usuario.nome} cadastrado com sucesso.`;
+        form.reset();
+      } catch (erro) {
+        mensagem.textContent = 'Não foi possível conectar ao servidor.';
+      }
+    });
+  </script>
+</body>
+</html>

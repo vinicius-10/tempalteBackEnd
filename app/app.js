@@ -1,55 +1,19 @@
 const db_mongoose = require('./config/db_mongoose');
 const mongoose = require('mongoose');
+const app = require('./server');
 
+const PORT = process.env.PORT_SERVER || 3000;
 
-mongoose.connect(
-  db_mongoose.connection,
-
-).then(() => {
-  console.log('conectado');
-}).catch((err) => {
-  console.log("eroo: " + err)
-});
-
-
-// --- CREATE ---
-function insereExemplo() {
-  new Exemplo({
-    str: 'Teste',
-    int: 10
-  }).save().then(() => {
-    console.log('Exemplo cadastrado');
-  }).catch((err) => {
-    console.log('erro: ' + err);
-  });
-}
-
-// --- READ ---
-async function consultaExemplo(const valor) {
-  const exemplos = await Exemplo.find({
-    str: valor
+mongoose.connect(db_mongoose.connection)
+  .then(() => {
+    console.log('Conectado ao MongoDB');
+    app.listen(PORT, () => {
+      console.log(`Servidor iniciado na porta ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Erro ao conectar ao MongoDB:', err);
+    process.exitCode = 1;
   });
 
-  console.log(exemplos);
-}
-// --- UPDATE ---
-async function atualizaExemplo() {
-  const exemplos = await Exemplo.findOneAndUpdate(
-    { str: 'Teste' },
-    { int: 20 }
-  );
-
-  console.log(exemplos);
-}
-
-// --- DELETE ---
-async function deletaExemplo() {
-  const exemplos = await Exemplo.findOneAndDelete({
-    str: 'Teste'
-  });
-}
-
-
-
-
-
+  

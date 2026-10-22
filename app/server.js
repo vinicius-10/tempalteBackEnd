@@ -1,25 +1,25 @@
 const express = require('express');
-const LivroDao = require('./LivroDao')
+const path = require('node:path');
+const UsuarioController = require('./controllers/UsuarioController');
 
 const app = express();
-const PORT = 3000;
+const usuarioController = new UsuarioController();
 
 app.use(express.json());
 
-const livroDao = new LivroDao();
-
-app.get('/livro', async(req, res) =>{
-    try{
-        const livros = await livroDao.busca();
-        return res.status(200).json(livros);
-    }catch(err){
-        console.log("erro: "+ err);
-        return res.status(500).json({
-            mensagem:"Erro ao buscar livros"
-        });
-    }
+app.get('/', (req, res) => {
+  res.status(200).json({
+    mensagem: 'API de usuários funcionando.'
+  });
 });
 
-app.listen(PORT, ()=>{
-    console.log("serverOn");
+app.get('/cadastroUsuario', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'cadastroUsuario.html'));
 });
+
+app.post(
+  ['/cadastroUsuario', '/cadastro_usuario', '/usuarios'],
+  usuarioController.cadastrar
+);
+
+module.exports = app;
