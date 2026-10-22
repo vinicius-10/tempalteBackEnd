@@ -50,6 +50,28 @@ Em caso de sucesso, a API responde com `201 Created` e os dados públicos do usu
 
 Dados obrigatórios ausentes ou inválidos retornam `400 Bad Request`. Um e-mail já cadastrado retorna `409 Conflict`.
 
+### Criar postagem
+
+Abra `GET /criarPostagem` para acessar o formulário. Informe o e-mail de um usuário já cadastrado; o formulário envia os dados em JSON para `POST /criarPostagem`. O endpoint `POST /postagens` também está disponível para clientes que enviam JSON diretamente.
+
+```json
+{
+  "titulo": "Minha primeira postagem",
+  "conteudo": "Olá, microblog!",
+  "email": "ana@example.com"
+}
+```
+
+Em caso de sucesso, a API responde com `201 Created`. Campos inválidos retornam `400 Bad Request`; um e-mail que não corresponde a um usuário cadastrado retorna `404 Not Found`. A postagem continua armazenando internamente a referência ao usuário.
+
+### Visualizar postagens e comentários
+
+Abra `GET /visualizarPostagens` para ver e buscar postagens pelo título ou conteúdo. Cada cartão com título e conteúdo é um link para a página de detalhes, que exibe a postagem e seus comentários.
+
+- `GET /postagens` retorna a lista de postagens; o parâmetro opcional `q` filtra por título ou conteúdo (exemplo: `/postagens?q=microblog`).
+- `GET /visualizarPostagem/:id` exibe a página de detalhes.
+- `GET /postagens/:id` retorna uma postagem e os comentários vinculados a ela.
+
 ## Entidades
 
 | Entidade | Dados principais | Relacionamentos |
@@ -75,6 +97,7 @@ Os modelos utilizam timestamps para registrar as datas de criação e atualizaç
 │   ├── config/
 │   │   └── db_mongoose.js
 │   ├── controllers/
+│   │   ├── PostagemController.js
 │   │   └── UsuarioController.js
 │   ├── dao/
 │   │   ├── ComentarioDao.js
@@ -84,6 +107,11 @@ Os modelos utilizam timestamps para registrar as datas de criação e atualizaç
 │   │   ├── Comentario.js
 │   │   ├── Postagem.js
 │   │   └── Usuario.js
+│   ├── public/
+│   │   ├── cadastroUsuario.html
+│   │   ├── criarPostagem.html
+│   │   ├── visualizarPostagem.html
+│   │   └── visualizarPostagens.html
 │   ├── app.js
 │   ├── package.json
 │   └── server.js
@@ -93,11 +121,11 @@ Os modelos utilizam timestamps para registrar as datas de criação e atualizaç
 ```
 
 - `app/models/`: schemas do Mongoose para as entidades do projeto.
-- `app/controllers/`: recebe as requisições HTTP e coordena o cadastro de usuários.
+- `app/controllers/`: recebe as requisições HTTP e coordena o cadastro de usuários e a criação de postagens.
 - `app/dao/`: operações de acesso a dados para usuários, postagens e comentários.
 - `app/config/db_mongoose.js`: configuração da conexão com o MongoDB.
 - `docker-compose.yml` e `Dockerfile`: configuração dos containers de desenvolvimento.
 
 ## Status
 
-Os modelos e as operações básicas de acesso a dados estão definidos. A API já possui a rota de cadastro de usuário; as demais funcionalidades serão desenvolvidas ao longo do projeto.
+Os modelos e as operações básicas de acesso a dados estão definidos. A API já possui formulários para cadastro de usuário, criação e visualização de postagens com comentários; as demais funcionalidades serão desenvolvidas ao longo do projeto.

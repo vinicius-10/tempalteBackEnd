@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalhes da postagem</title>
+</head>
+<body>
+  <main>
+    <p><a href="/visualizarPostagens">Voltar para postagens</a></p>
+    <p id="mensagem" role="status" aria-live="polite">Carregando postagem...</p>
+    <article id="postagem"></article>
+  </main>
+
+  <script>
+    const postagemElemento = document.querySelector('#postagem');
+    const mensagem = document.querySelector('#mensagem');
+    const postagemId = window.location.pathname.split('/').pop();
+
+    function adicionarTexto(elemento, destino, texto) {
+      const novoElemento = document.createElement(elemento);
+      novoElemento.textContent = texto;
+      destino.append(novoElemento);
+      return novoElemento;
+    }
+
+    function formatarData(data) {
+      return data ? new Date(data).toLocaleString('pt-BR') : '';
+    }
+
+    function renderizarPostagem(postagem) {
+      const autor = postagem.usuario?.nome || 'Usuário desconhecido';
+      adicionarTexto('h1', postagemElemento, postagem.titulo);
+      adicionarTexto('p', postagemElemento, postagem.conteudo);
+      adicionarTexto(
+        'small',
+        postagemElemento,
+        `Por ${autor} · ${formatarData(postagem.createdAt)}`
+      );
+      adicionarTexto('h2', postagemElemento, 'Comentários');
+
+      if (postagem.comentarios.length === 0) {
+        adicionarTexto('p', postagemElemento, 'Ainda não há comentários nesta postagem.');
+        return;
+      }
+
+      const lista = document.createElement('ul');
+
+      for (const comentario of postagem.comentarios) {
+        const item = document.createElement('li');
+        const autorComentario = comentario.usuario?.nome || 'Usuário desconhecido';
+
+        adicionarTexto('p', item, comentario.conteudo);
+        adicionarTexto(
+          'small',
+          item,
+          `Por ${autorComentario} · ${formatarData(comentario.createdAt)}`
+        );
+        lista.append(item);
+      }
+
+      postagemElemento.append(lista);
+    }
+
+    async function carregarPostagem() {
+      try {
+        const resposta = await fetch(`/postagens/${encodeURIComponent(postagemId)}`);
+        const resultado = await resposta.json();
+
+        if (!resposta.ok) {
+          throw new Error(resultado.mensagem || 'Não foi possível carregar a postagem.');
+        }
+
+        renderizarPostagem(resultado.postagem);
+        mensagem.textContent = '';
+      } catch (erro) {
+        mensagem.textContent = erro.message || 'Não foi possível conectar ao servidor.';
+      }
+    }
+
+    carregarPostagem();
+  </script>
+</body>
+</html>

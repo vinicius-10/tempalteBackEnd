@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Postagens do microblog</title>
+</head>
+<body>
+  <main>
+    <h1>Postagens do microblog</h1>
+    <p><a href="/criarPostagem">Criar uma postagem</a></p>
+    <form id="formBusca">
+      <label for="termoBusca">Buscar postagem</label>
+      <input id="termoBusca" name="q" type="search">
+      <button type="submit">Buscar</button>
+      <button id="limparBusca" type="button">Limpar busca</button>
+    </form>
+    <p id="mensagem" role="status" aria-live="polite">Carregando postagens...</p>
+    <section id="postagens" aria-label="Lista de postagens"></section>
+  </main>
+
+  <script>
+    const listaPostagens = document.querySelector('#postagens');
+    const mensagem = document.querySelector('#mensagem');
+    const formBusca = document.querySelector('#formBusca');
+    const campoBusca = document.querySelector('#termoBusca');
+    const botaoLimpar = document.querySelector('#limparBusca');
+
+    function adicionarTexto(elemento, seletor, texto) {
+      const destino = document.createElement(elemento);
+      destino.textContent = texto;
+      seletor.append(destino);
+      return destino;
+    }
+
+    function renderizarPostagem(postagem) {
+      const link = document.createElement('a');
+      const cartao = document.createElement('div');
+      const titulo = document.createElement('h2');
+      const conteudo = document.createElement('p');
+
+      link.href = `/visualizarPostagem/${encodeURIComponent(postagem.id)}`;
+      titulo.textContent = postagem.titulo;
+      conteudo.textContent = postagem.conteudo;
+      cartao.append(titulo, conteudo);
+      link.append(cartao);
+      return link;
+    }
+
+    async function carregarPostagens(termo = '') {
+      mensagem.textContent = 'Carregando postagens...';
+      listaPostagens.replaceChildren();
+
+      try {
+        const parametros = new URLSearchParams();
+        if (termo) {
+          parametros.set('q', termo);
+        }
+
+        const query = parametros.toString();
+        const resposta = await fetch(`/postagens${query ? `?${query}` : ''}`);
+        const resultado = await resposta.json();
+
+        if (!resposta.ok) {
+          throw new Error(resultado.mensagem || 'Não foi possível carregar as postagens.');
+        }
+
+        listaPostagens.replaceChildren();
+
+        if (resultado.postagens.length === 0) {
+          mensagem.textContent = termo
+            ? 'Nenhuma postagem encontrada para essa busca.'
+            : 'Ainda não há postagens.';
+          return;
+        }
+
+        for (const postagem of resultado.postagens) {
+          listaPostagens.append(renderizarPostagem(postagem));
+        }
+        mensagem.textContent = '';
+      } catch (erro) {
+        mensagem.textContent = erro.message || 'Não foi possível conectar ao servidor.';
+      }
+    }
+
+    formBusca.addEventListener('submit', (event) => {
+      event.preventDefault();
+      carregarPostagens(campoBusca.value.trim());
+    });
+
+    botaoLimpar.addEventListener('click', () => {
+      campoBusca.value = '';
+      carregarPostagens();
+    });
+
+    carregarPostagens();
+  </script>
+</body>
+</html>

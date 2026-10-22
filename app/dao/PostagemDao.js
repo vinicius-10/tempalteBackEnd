@@ -11,6 +11,16 @@ class PostagemDao {
     return Postagem.find(filtro);
   }
 
+  async consultaComAutor(filtro = {}) {
+    return Postagem.find(filtro)
+      .populate('usuario', 'nome email')
+      .sort({ createdAt: -1 });
+  }
+
+  async consultaPorId(id) {
+    return Postagem.findById(id).populate('usuario', 'nome email');
+  }
+
   async atualiza(filtro, dados) {
     return Postagem.findOneAndUpdate(filtro, dados, {
       new: true,
