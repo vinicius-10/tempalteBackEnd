@@ -9,11 +9,7 @@ const usuarioController = new UsuarioController();
 
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.status(200).json({
-    mensagem: 'API de usuários funcionando.'
-  });
-});
+
 
 app.get('/cadastroUsuario', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'cadastroUsuario.html'));
@@ -23,7 +19,7 @@ app.get('/criarPostagem', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'criarPostagem.html'));
 });
 
-app.get('/visualizarPostagens', (req, res) => {
+app.get(['/visualizarPostagens','/'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'visualizarPostagens.html'));
 });
 
@@ -34,6 +30,22 @@ app.get('/visualizarPostagem/:id', (req, res) => {
 app.get('/postagens', postagemController.listar);
 
 app.get('/postagens/:id', postagemController.detalhar);
+
+app.patch('/postagens/:id', postagemController.editar);
+
+app.delete('/postagens/:id', postagemController.excluir);
+
+app.post('/postagens/:id/comentarios', postagemController.criarComentario);
+
+app.patch(
+  '/postagens/:id/comentarios/:comentarioId',
+  postagemController.editarComentario
+);
+
+app.delete(
+  '/postagens/:id/comentarios/:comentarioId',
+  postagemController.excluirComentario
+);
 
 app.post(
   '/cadastroUsuario',

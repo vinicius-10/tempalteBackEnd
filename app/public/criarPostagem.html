@@ -32,16 +32,16 @@
   </main>
 
   <script>
-    const form = document.querySelector('#formPostagem');
-    const mensagem = document.querySelector('#mensagem');
+    const form = document.getElementById('formPostagem');
+    const mensagem = document.getElementById('mensagem');
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       mensagem.textContent = '';
 
-      const titulo = form.elements.titulo.value.trim();
-      const conteudo = form.elements.conteudo.value.trim();
-      const email = form.elements.email.value.trim();
+      const titulo = document.getElementById('titulo').value.trim();
+      const conteudo = document.getElementById('conteudo').value.trim();
+      const email = document.getElementById('email').value.trim();
 
       if (!titulo || !conteudo || !email) {
         mensagem.textContent = 'Preencha título, conteúdo e e-mail do usuário.';

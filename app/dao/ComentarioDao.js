@@ -27,6 +27,10 @@ class ComentarioDao {
   async deleta(filtro) {
     return Comentario.findOneAndDelete(filtro);
   }
+
+  async deletaPorPostagem(postagemId) {
+    return Comentario.deleteMany({ postagem: postagemId });
+  }
 }
 
 module.exports = ComentarioDao;

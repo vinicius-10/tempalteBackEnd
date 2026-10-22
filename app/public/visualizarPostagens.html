@@ -20,11 +20,11 @@
   </main>
 
   <script>
-    const listaPostagens = document.querySelector('#postagens');
-    const mensagem = document.querySelector('#mensagem');
-    const formBusca = document.querySelector('#formBusca');
-    const campoBusca = document.querySelector('#termoBusca');
-    const botaoLimpar = document.querySelector('#limparBusca');
+    const listaPostagens = document.getElementById('postagens');
+    const mensagem = document.getElementById('mensagem');
+    const formBusca = document.getElementById('formBusca');
+    const campoBusca = document.getElementById('termoBusca');
+    const botaoLimpar = document.getElementById('limparBusca');
 
     function adicionarTexto(elemento, seletor, texto) {
       const destino = document.createElement(elemento);

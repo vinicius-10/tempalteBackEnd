@@ -37,17 +37,17 @@
   </main>
 
   <script>
-    const form = document.querySelector('#formCadastro');
-    const mensagem = document.querySelector('#mensagem');
+    const form = document.getElementById('formCadastro');
+    const mensagem = document.getElementById('mensagem');
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       mensagem.textContent = '';
 
-      const nome = form.elements.nome.value.trim();
-      const email = form.elements.email.value.trim();
-      const senha = form.elements.senha.value;
-      const confirmarSenha = form.elements.confirmarSenha.value;
+      const nome = document.getElementById('nome').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const senha = document.getElementById('senha').value;
+      const confirmarSenha = document.getElementById('confirmarSenha').value;
 
       if (!nome || !email || !senha.trim() || !confirmarSenha.trim()) {
         mensagem.textContent = 'Preencha nome, e-mail, senha e confirmação da senha.';

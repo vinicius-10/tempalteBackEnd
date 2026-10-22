@@ -71,6 +71,22 @@ Abra `GET /visualizarPostagens` para ver e buscar postagens pelo título ou cont
 - `GET /postagens` retorna a lista de postagens; o parâmetro opcional `q` filtra por título ou conteúdo (exemplo: `/postagens?q=microblog`).
 - `GET /visualizarPostagem/:id` exibe a página de detalhes.
 - `GET /postagens/:id` retorna uma postagem e os comentários vinculados a ela.
+- `PATCH /postagens/:id` edita o título e o conteúdo da postagem.
+- `DELETE /postagens/:id` exclui a postagem e seus comentários vinculados.
+- `POST /postagens/:id/comentarios` cadastra um comentário vinculado à postagem e a um usuário encontrado pelo e-mail.
+- `PATCH /postagens/:id/comentarios/:comentarioId` edita um comentário.
+- `DELETE /postagens/:id/comentarios/:comentarioId` exclui um comentário.
+
+As rotas de edição e exclusão identificam postagens e comentários pelos IDs da URL. Excluir uma postagem também remove seus comentários vinculados. Como ainda não há autenticação, essas rotas não verificam a identidade de quem solicita a alteração.
+
+Para cadastrar um comentário, envie `conteudo` e `email` em JSON:
+
+```json
+{
+  "conteudo": "Ótima publicação!",
+  "email": "ana@example.com"
+}
+```
 
 ## Entidades
 
