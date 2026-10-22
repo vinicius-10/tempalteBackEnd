@@ -1,6 +1,6 @@
 const db_mongoose = require('./config/db_mongoose');
 const mongoose = require('mongoose');
-const Exemplo = require('./models/Exemplo');
+
 
 mongoose.connect(
   db_mongoose.connection,
@@ -10,6 +10,7 @@ mongoose.connect(
 }).catch((err) => {
   console.log("eroo: " + err)
 });
+
 
 // --- CREATE ---
 function insereExemplo() {
@@ -24,9 +25,9 @@ function insereExemplo() {
 }
 
 // --- READ ---
-async function consultaExemplo() {
+async function consultaExemplo(const valor) {
   const exemplos = await Exemplo.find({
-    str: 'Teste'
+    str: valor
   });
 
   console.log(exemplos);
@@ -50,7 +51,5 @@ async function deletaExemplo() {
 
 
 
- insereExemplo();
- consultaExemplo();
-// atualizaExemplo();
-// deletaExemplo();
+
+
